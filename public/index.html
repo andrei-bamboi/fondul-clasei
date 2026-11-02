@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fondul Clasei</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: caiet de matematică — antet pe hârtie cu pătrățele, apoi o singură coloană de lucru cu file (tab-uri) */
+:root{
+  --bg:#F5F7FB; --surface:#FFFFFF; --sunk:#EDF0F7; --line:#D9DEEA; --grid:#E3E8F4;
+  --fg:#18203A; --muted:#5B6480; --accent:#2445C9; --accent-fg:#FFFFFF; --accent-soft:#E4E9FB;
+  --neg:#B42727; --neg-soft:#FBE7E7; --pos:#17704A; --pos-soft:#E1F3EA; --warn:#8A5A00; --warn-soft:#FBF0D9;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:10px; --shadow:0 1px 2px rgba(24,32,58,.06),0 8px 24px rgba(24,32,58,.08);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1320; --surface:#171C2C; --sunk:#121726; --line:#2A3148; --grid:#1B2135;
+  --fg:#E7EAF4; --muted:#9AA3BF; --accent:#8FA4FF; --accent-fg:#0F1320; --accent-soft:#222B4A;
+  --neg:#FF8A8A; --neg-soft:#3A1E24; --pos:#6BD6A2; --pos-soft:#17332A; --warn:#F2C46B; --warn-soft:#352A14;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1320; --surface:#171C2C; --sunk:#121726; --line:#2A3148; --grid:#1B2135;
+  --fg:#E7EAF4; --muted:#9AA3BF; --accent:#8FA4FF; --accent-fg:#0F1320; --accent-soft:#222B4A;
+  --neg:#FF8A8A; --neg-soft:#3A1E24; --pos:#6BD6A2; --pos-soft:#17332A; --warn:#F2C46B; --warn-soft:#352A14;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); color-scheme:dark}
+
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num,.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* antet */
+.hero{background-color:var(--surface);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;border-bottom:1px solid var(--line)}
+.hero .wrap{padding-block:28px 22px;display:grid;gap:18px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.hero h1{font-size:clamp(28px,5vw,40px);font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.stat .k{font-size:12px;color:var(--muted);font-weight:600}
+.stat .v{font-family:var(--f-mono);font-size:clamp(17px,2.4vw,22px);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat.main{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.stat.main .k{color:inherit;opacity:.85}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* tab-uri */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs a{padding:12px 12px 10px;color:var(--muted);text-decoration:none;font-weight:600;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs a[aria-current="page"]{color:var(--fg);border-bottom-color:var(--accent)}
+.tabs a .badge{margin-left:6px}
+
+main .wrap{padding-block:22px 64px;display:grid;gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.sec-h{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+.sec-h h2{font-size:22px}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.danger{color:var(--neg);border-color:var(--neg)}
+.btn.ghost{border-color:transparent;background:transparent;padding-inline:8px}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:default}
+
+.badge{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px;font-family:var(--f-body);white-space:nowrap}
+.b-neg{background:var(--neg-soft);color:var(--neg)}
+.b-pos{background:var(--pos-soft);color:var(--pos)}
+.b-warn{background:var(--warn-soft);color:var(--warn)}
+.b-acc{background:var(--accent-soft);color:var(--accent)}
+
+/* tabele */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;background:var(--sunk);position:sticky;top:0}
+td.r,th.r{text-align:right}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--sunk)}
+tr.mine td{background:var(--accent-soft)}
+tfoot td{font-weight:700;background:var(--sunk);border-top:1px solid var(--line);border-bottom:0}
+.amt-neg{color:var(--neg);font-weight:600}
+.amt-pos{color:var(--pos);font-weight:600}
+
+/* copilul meu */
+.me{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+.me .big{font-family:var(--f-mono);font-size:clamp(26px,5vw,36px);font-weight:600;line-height:1.1}
+@media (max-width:560px){.me{grid-template-columns:1fr}}
+
+/* liste */
+.list{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:center}
+.item:last-child{border-bottom:0}
+.item.click{cursor:pointer}.item.click:hover{background:var(--sunk)}
+.item .t{font-weight:600;overflow-wrap:anywhere}
+.item .meta{font-size:13px;color:var(--muted)}
+.item .amt{text-align:right;font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+
+/* formular */
+.form{display:grid;gap:14px}
+.f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.f2{grid-template-columns:1fr}}
+label.fld{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--muted);min-width:0}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 10px;font-size:15px;color:var(--fg);min-width:0}
+textarea{min-height:64px;resize:vertical}
+.alloc{display:grid;gap:0;border:1px solid var(--line);border-radius:8px;max-height:340px;overflow:auto}
+.alloc label{display:grid;grid-template-columns:auto minmax(0,1fr) 110px;gap:10px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);font-size:14px}
+.alloc label:last-child{border-bottom:0}
+.alloc input[type=number]{padding:6px 8px;text-align:right;font-family:var(--f-mono)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--sunk);border-radius:8px;padding:10px}
+.tools input{width:110px}
+
+/* plată */
+.payrow{display:grid;grid-template-columns:140px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+.payrow:last-child{border-bottom:0}
+.payrow .val{font-family:var(--f-mono);font-weight:600;overflow-wrap:anywhere}
+@media (max-width:560px){.payrow{grid-template-columns:minmax(0,1fr) auto}.payrow .lbl{grid-column:1/-1}}
+.msg{font-family:var(--f-mono);font-size:13px;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(10,14,28,.5);z-index:20;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);width:min(640px,100%);max-height:calc(100% - 8px);overflow:auto;padding:20px;display:grid;gap:16px}
+.modal h3{font-size:20px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;z-index:30;max-width:calc(100% - 32px)}
+.notice{border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--warn-soft);color:var(--fg);border-radius:8px;padding:12px 14px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.modal{animation:pop .16s ease-out}@keyframes pop{from{transform:translateY(6px);opacity:.6}}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow" id="sub">Evidența fondului clasei</div>
+      <h1 id="cls">Fondul clasei</h1>
+    </div>
+    <div class="stats">
+      <div class="stat main"><div class="k">Sold în fond</div><div class="v" id="st-sold">—</div></div>
+      <div class="stat"><div class="k">Încasat total</div><div class="v" id="st-in">—</div></div>
+      <div class="stat"><div class="k">Cheltuit total</div><div class="v" id="st-out">—</div></div>
+      <div class="stat"><div class="k" id="st-debt-k">Restanțe</div><div class="v" id="st-debt">—</div></div>
+    </div>
+  </div>
+</header>
+<nav class="tabs" aria-label="Secțiuni">
+  <div class="wrap" id="tabs">
+    <a href="#elevi" data-v="elevi">Elevi</a>
+    <a href="#cheltuieli" data-v="cheltuieli">Cheltuieli</a>
+    <a href="#plati" data-v="plati">Plăți</a>
+    <a href="#plateste" data-v="plateste">Cum plătesc</a>
+    <a href="#administrare" data-v="administrare" id="tab-admin" hidden>Administrare</a>
+    <a href="#" id="tab-login" data-act="login" style="margin-left:auto">Casier</a>
+  </div>
+</nav>
+<main><div class="wrap" id="view"><div class="card empty">Se încarcă datele fondului…</div></div></main>
+<div id="modal-root"></div>
+
+<script>
+(() => {
+const S = {loaded:false,error:null,admin:false,adminEnabled:true,canClaim:true,
+  students:[],expenses:[],payments:[],claims:[],settings:{},ready:{students:false,expenses:false,payments:false},
+  mine:null, payFilter:''};
+try{ S.mine = localStorage.getItem('fc-copil'); }catch(e){}
+
+/* ---------- utilitare ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ct = v => Math.round(Number(v || 0) * 100);
+const NF = new Intl.NumberFormat('ro-RO',{minimumFractionDigits:2,maximumFractionDigits:2});
+const lei = cents => NF.format(cents/100) + ' lei';
+const leiS = cents => (cents>0?'+':cents<0?'−':'') + NF.format(Math.abs(cents)/100) + ' lei';
+const today = () => { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const fdate = d => { if(!d) return 'din Excel'; const [y,m,dd]=d.split('-'); return `${dd}.${m}.${y}`; };
+const ref = st => st ? `FC${String(st.nr).padStart(2,'0')}` : '';
+const stuById = id => S.students.find(s => s.id === id);
+const METHODS = {transfer:'Transfer bancar',revolut:'Revolut',numerar:'Numerar',import:'Import Excel'};
+
+async function api(method, url, body){
+  const res = await fetch(url, {method, headers: body ? {'Content-Type':'application/json'} : {}, body: body ? JSON.stringify(body) : undefined, credentials:'same-origin'});
+  let data = {}; try{ data = await res.json(); }catch(e){}
+  if(!res.ok){ const err = new Error(data.error || 'Eroare'); err.status = res.status; throw err; }
+  return data;
+}
+function toast(t){ const el=document.createElement('div'); el.className='toast'; el.setAttribute('role','status'); el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),2600); }
+async function copy(text, btn){
+  try{ await navigator.clipboard.writeText(text); toast('Copiat'); }
+  catch(e){ const r=document.createRange(); const n=btn?.closest('[data-copy-scope]')?.querySelector('.copy-src'); if(n){ r.selectNodeContents(n); const s=getSelection(); s.removeAllRanges(); s.addRange(r);} toast('Selectat — apasă Ctrl/⌘+C'); }
+}
+
+/* ---------- calcule ---------- */
+function balances(){
+  const b = {}; S.students.forEach(s => b[s.id] = {paid:0, spent:0});
+  S.payments.forEach(p => { if(b[p.studentId]) b[p.studentId].paid += ct(p.amount); });
+  S.expenses.forEach(e => Object.entries(e.alloc||{}).forEach(([sid,v]) => { if(b[sid]) b[sid].spent += ct(v); }));
+  Object.values(b).forEach(x => x.bal = x.paid - x.spent);
+  return b;
+}
+const expTotal = e => Object.values(e.alloc||{}).reduce((a,v)=>a+ct(v),0);
+const sortedExpenses = () => [...S.expenses].sort((a,b) => {
+  if(!!a.date !== !!b.date) return a.date ? -1 : 1;
+  if(a.date && b.date && a.date !== b.date) return a.date < b.date ? 1 : -1;
+  return (a.order??0) - (b.order??0) || (b.createdAt||0) - (a.createdAt||0);
+});
+
+/* ---------- randare ---------- */
+function renderHeader(){
+  const b = balances(); let pin=0,out=0,debt=0,nd=0;
+  Object.values(b).forEach(x => { pin+=x.paid; out+=x.spent; if(x.bal<0){debt+=-x.bal; nd++;} });
+  $('#cls').textContent = S.settings.className || 'Fondul clasei';
+  $('#sub').textContent = S.settings.school ? S.settings.school : 'Evidența fondului clasei';
+  $('#st-sold').textContent = lei(pin-out);
+  $('#st-in').textContent = lei(pin);
+  $('#st-out').textContent = lei(out);
+  $('#st-debt').textContent = nd ? lei(debt) : 'niciuna';
+  $('#st-debt-k').textContent = nd ? `Restanțe · ${nd} elevi` : 'Restanțe';
+  $('#tab-admin').hidden = !S.admin;
+  $('#tab-login').hidden = S.admin || !S.adminEnabled;
+  const pend = S.claims.length;
+  const pt = document.querySelector('#tabs a[data-v="plati"]');
+  pt.innerHTML = 'Plăți' + (pend ? ` <span class="badge b-warn">${pend}</span>` : '');
+}
+
+function view(){ const h = location.hash.slice(1); return ['elevi','cheltuieli','plati','plateste','administrare'].includes(h) ? (h==='administrare' && !S.admin ? 'elevi' : h) : 'elevi'; }
+
+function render(){
+  renderHeader();
+  const v = view();
+  const ae = document.activeElement;
+  if(S.lastView===v && ae && ae.closest && ae.closest('#view form') && ae.matches('input,select,textarea')) return;
+  S.lastView = v;
+  document.querySelectorAll('#tabs a').forEach(a => { if(a.dataset.v===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  if(S.error && !S.loaded){ $('#view').innerHTML = `<div class="card notice">Serverul nu răspunde (${esc(S.error)}). Verifică dacă containerul rulează, apoi reîncarcă pagina.</div>`; return; }
+  if(!S.loaded){ $('#view').innerHTML = `<div class="card empty">Se încarcă datele fondului…</div>`; return; }
+  ({elevi:vElevi,cheltuieli:vCheltuieli,plati:vPlati,plateste:vPlateste,administrare:vAdmin})[v]();
+}
+
+function myCard(b){
+  const opts = `<option value="">— alege copilul —</option>` + S.students.map(s=>`<option value="${esc(s.id)}" ${s.id===S.mine?'selected':''}>${esc(s.name)}</option>`).join('');
+  const st = stuById(S.mine);
+  let right = '';
+  if(st){
+    const x = b[st.id]; const neg = x.bal<0;
+    right = `<div style="text-align:right">
+      <div class="small muted">${neg?'De plătit':'Sold disponibil'}</div>
+      <div class="big ${neg?'amt-neg':'amt-pos'}">${lei(Math.abs(x.bal))}</div>
+      <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn sm" data-open-stu="${esc(st.id)}">Fișa completă</button><a class="btn sm primary" href="#plateste">Cum plătesc</a></div></div>`;
+  }
+  return `<section class="card me" aria-label="Copilul meu">
+    <div style="display:grid;gap:8px;min-width:0"><div class="eyebrow">Copilul meu</div>
+      <select id="mine-sel" aria-label="Alege copilul">${opts}</select>
+      <div class="small muted">Alegerea se ține minte doar pe acest dispozitiv.</div></div>${right}</section>`;
+}
+
+function vElevi(){
+  const b = balances();
+  let tp=0,ts=0;
+  const rows = S.students.map(s => { const x=b[s.id]; tp+=x.paid; ts+=x.spent;
+    const pill = x.bal<0 ? `<span class="badge b-neg">restanță</span>` : x.bal===0 ? `<span class="badge b-acc">la zi</span>` : `<span class="badge b-pos">avans</span>`;
+    return `<tr class="click ${s.id===S.mine?'mine':''}" data-open-stu="${esc(s.id)}" tabindex="0">
+      <td class="num muted">${s.nr}</td><td><strong>${esc(s.name)}</strong> <span class="small muted mono">${ref(s)}</span></td>
+      <td class="r num">${lei(x.paid)}</td><td class="r num">${lei(x.spent)}</td>
+      <td class="r num ${x.bal<0?'amt-neg':'amt-pos'}">${leiS(x.bal)}</td><td>${pill}</td></tr>`; }).join('');
+  $('#view').innerHTML = myCard(b) + `
+  <section style="display:grid;gap:12px">
+    <div class="sec-h"><h2>Situația pe elevi</h2>${S.admin?`<div class="row"><button class="btn" data-act="new-pay">+ Plată</button><button class="btn primary" data-act="new-exp">+ Cheltuială</button></div>`:''}</div>
+    ${S.students.length ? `<div class="tbl-wrap"><table>
+      <thead><tr><th>Nr.</th><th>Elev</th><th class="r">Virat</th><th class="r">Cheltuieli</th><th class="r">Sold</th><th>Stare</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td></td><td>Total clasă</td><td class="r num">${lei(tp)}</td><td class="r num">${lei(ts)}</td><td class="r num">${leiS(tp-ts)}</td><td></td></tr></tfoot>
+    </table></div>` : `<div class="card empty">Nu există încă elevi. ${S.admin?'Adaugă-i din Administrare.':'Casierul îi va adăuga în curând.'}</div>`}
+    <p class="small muted">Apasă pe un rând pentru fișa elevului: fiecare cheltuială și plată, cu data ei.</p>
+  </section>`;
+}
+
+function vCheltuieli(){
+  const list = sortedExpenses();
+  const items = list.map(e => {
+    const vals = Object.values(e.alloc||{}).map(ct).filter(v=>v>0);
+    const mn = Math.min(...vals), mx = Math.max(...vals);
+    const per = !vals.length ? '' : mn===mx ? `${lei(mn)} / elev` : `între ${lei(mn)} și ${lei(mx)} / elev`;
+    return `<div class="item click" data-open-exp="${esc(e.id)}" tabindex="0">
+      <div style="min-width:0"><div class="t">${esc(e.title)}</div>
+      <div class="meta">${fdate(e.date)} · ${vals.length} elevi · ${per}${e.note?` · ${esc(e.note)}`:''}</div></div>
+      <div class="amt">${lei(expTotal(e))}</div></div>`; }).join('');
+  const tot = list.reduce((a,e)=>a+expTotal(e),0);
+  $('#view').innerHTML = `<section style="display:grid;gap:12px">
+    <div class="sec-h"><div><h2>Cheltuieli</h2><div class="small muted">${list.length} cheltuieli · ${lei(tot)} în total</div></div>
+    ${S.admin?`<button class="btn primary" data-act="new-exp">+ Cheltuială</button>`:''}</div>
+    ${list.length?`<div class="list">${items}</div>`:`<div class="card empty">Nicio cheltuială înregistrată încă.</div>`}
+  </section>`;
+}
+
+function vPlati(){
+  const f = S.payFilter;
+  const pays = S.payments.filter(p => !f || p.studentId===f).sort((a,b)=> (b.date||'') < (a.date||'') ? -1 : (b.date||'') > (a.date||'') ? 1 : (b.createdAt||0)-(a.createdAt||0));
+  const claims = S.claims.map(c => { const s=stuById(c.studentId);
+    return `<div class="item"><div style="min-width:0"><div class="t">${esc(s?.name||'Elev necunoscut')} <span class="badge b-warn">în așteptare</span></div>
+      <div class="meta">${fdate(c.date)} · ${esc(METHODS[c.method]||c.method)}${c.note?` · ${esc(c.note)}`:''}</div></div>
+      <div class="row" style="justify-content:flex-end"><span class="amt">${lei(ct(c.amount))}</span>
+      ${S.admin?`<button class="btn sm primary" data-confirm-claim="${esc(c.id)}">Confirmă</button><button class="btn sm ghost" data-reject-claim="${esc(c.id)}">Respinge</button>`:''}</div></div>`; }).join('');
+  const rows = pays.map(p => { const s=stuById(p.studentId);
+    return `<tr ${S.admin?`class="click" data-edit-pay="${esc(p.id)}" tabindex="0"`:''}><td class="num">${fdate(p.date)}</td><td>${esc(s?.name||'—')}</td><td>${esc(METHODS[p.method]||p.method||'')}</td><td class="small muted">${esc(p.note||'')}</td><td class="r num amt-pos">${lei(ct(p.amount))}</td></tr>`; }).join('');
+  const sum = pays.reduce((a,p)=>a+ct(p.amount),0);
+  $('#view').innerHTML = `
+  ${S.claims.length?`<section style="display:grid;gap:12px"><div class="sec-h"><h2>Plăți anunțate de părinți</h2></div>
+    <p class="small muted" style="margin:0">${S.admin?'Verifică în extrasul de cont și confirmă. Confirmarea le trece în soldul elevului.':'Casierul le confirmă după ce vede banii în cont.'}</p>
+    <div class="list">${claims}</div></section>`:''}
+  <section style="display:grid;gap:12px">
+    <div class="sec-h"><h2>Plăți încasate</h2>
+      <div class="row"><select id="pay-filter" aria-label="Filtrează după elev" style="width:auto"><option value="">Toți elevii</option>${S.students.map(s=>`<option value="${esc(s.id)}" ${s.id===f?'selected':''}>${esc(s.name)}</option>`).join('')}</select>
+      ${S.admin?`<button class="btn primary" data-act="new-pay">+ Plată</button>`:''}</div></div>
+    ${pays.length?`<div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Elev</th><th>Metodă</th><th>Notă</th><th class="r">Sumă</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="4">${pays.length} plăți</td><td class="r num">${lei(sum)}</td></tr></tfoot></table></div>`:`<div class="card empty">Nicio plată${f?' pentru acest elev':''}.</div>`}
+  </section>`;
+}
+
+function claimMessage(st, amount, date, method){
+  const s = S.settings;
+  return `Bună! Am plătit ${amount?NF.format(Number(amount))+' lei':'[suma]'} la fondul clasei pentru ${st?st.name:'[nume copil]'}`+
+    ` (${st?ref(st):'FCxx'}), pe ${fdate(date||today())}, prin ${METHODS[method]||'transfer bancar'}.`;
+}
+
+function vPlateste(){
+  const s = S.settings; const st = stuById(S.mine);
+  const b = balances(); const due = st && b[st.id].bal<0 ? -b[st.id].bal : 0;
+  const detail = (lbl,val,id) => val ? `<div class="payrow" data-copy-scope><div class="lbl small muted">${lbl}</div><div class="val copy-src" id="${id}">${esc(val)}</div><button class="btn sm" data-copy="${esc(val)}">Copiază</button></div>` : '';
+  const refText = st ? `${ref(st)} ${st.name}` : '';
+  const hasBank = s.iban || s.revolut;
+  const opts = `<option value="">— alege copilul —</option>`+S.students.map(x=>`<option value="${esc(x.id)}" ${x.id===S.mine?'selected':''}>${esc(x.name)}</option>`).join('');
+  $('#view').innerHTML = `
+  <section class="card" style="display:grid;gap:14px">
+    <div><div class="eyebrow">Pasul 1</div><h2 style="font-size:22px">Fă plata</h2></div>
+    ${hasBank ? `<div>
+      ${detail('Beneficiar', s.beneficiar,'pd-ben')}
+      ${detail('IBAN', s.iban,'pd-iban')}
+      ${detail('Banca', s.bank,'pd-bank')}
+      ${detail('Revolut', s.revolut,'pd-rev')}
+      ${st ? detail('Detalii plată', refText,'pd-ref') : `<div class="payrow"><div class="lbl small muted">Detalii plată</div><div class="val">FCxx + numele copilului</div><span></span></div>`}
+      ${st && due ? detail('Suma de plătit', NF.format(due/100),'pd-due') : ''}
+    </div>
+    <p class="small muted" style="margin:0">Scrie mereu codul copilului (ex. <span class="mono">FC07</span>) la detaliile plății: așa casierul găsește rapid transferul în extras.</p>`
+    : `<div class="notice">${S.admin?'Completează IBAN-ul și beneficiarul în <a href="#administrare">Administrare</a> ca părinții să vadă unde plătesc.':'Casierul nu a completat încă datele contului. Revino mai târziu sau întreabă-l direct.'}</div>`}
+    ${s.payNote?`<p style="margin:0">${esc(s.payNote)}</p>`:''}
+  </section>
+  <section class="card" style="display:grid;gap:14px">
+    <div><div class="eyebrow">Pasul 2</div><h2 style="font-size:22px">Anunță casierul</h2>
+    <p class="small muted" style="margin:4px 0 0">Plata apare în sold după ce casierul o vede în cont și o confirmă.</p></div>
+    <form id="claim-form" class="form">
+      <div class="f2"><label class="fld">Copilul<select id="cl-stu" required>${opts}</select></label>
+      <label class="fld">Suma (lei)<input id="cl-amt" type="number" step="0.01" min="0.01" value="${due?(due/100).toFixed(2):''}" required></label></div>
+      <div class="f2"><label class="fld">Data plății<input id="cl-date" type="date" value="${today()}"></label>
+      <label class="fld">Metoda<select id="cl-met"><option value="transfer">Transfer bancar</option><option value="revolut">Revolut</option><option value="numerar">Numerar</option></select></label></div>
+      <div id="cl-out"></div>
+      <div class="row">${S.canClaim!==false?`<button class="btn primary" type="submit">Trimite anunțul</button>`:''}<button class="btn" type="button" id="cl-msg">Copiază mesaj pentru WhatsApp</button></div>
+      ${s.contact?`<div class="small muted">Casier: <span class="mono">${esc(s.contact)}</span></div>`:''}
+    </form>
+  </section>`;
+}
+
+function vAdmin(){
+  const s = S.settings;
+  const sv = k => esc(s[k]||'');
+  $('#view').innerHTML = `
+  <section class="card" style="display:grid;gap:14px">
+    <h2 style="font-size:22px">Date clasă și cont</h2>
+    <form id="set-form" class="form">
+      <div class="f2"><label class="fld">Numele clasei<input id="s-className" type="text" value="${sv('className')}" placeholder="ex. Clasa a III-a B"></label>
+      <label class="fld">Școala / învățătoare<input id="s-school" type="text" value="${sv('school')}" placeholder="ex. Școala Gimnazială nr. 1 · înv. Popescu"></label></div>
+      <div class="f2"><label class="fld">Beneficiar cont<input id="s-beneficiar" type="text" value="${sv('beneficiar')}" placeholder="Numele titularului"></label>
+      <label class="fld">IBAN<input id="s-iban" type="text" value="${sv('iban')}" placeholder="RO49 AAAA 1B31 0075 9384 0000"></label></div>
+      <div class="f2"><label class="fld">Banca<input id="s-bank" type="text" value="${sv('bank')}"></label>
+      <label class="fld">Revolut (opțional)<input id="s-revolut" type="text" value="${sv('revolut')}" placeholder="@utilizator sau telefon"></label></div>
+      <div class="f2"><label class="fld">Contact casier<input id="s-contact" type="text" value="${sv('contact')}" placeholder="telefon / WhatsApp"></label>
+      <label class="fld">Mesaj pentru părinți<input id="s-payNote" type="text" value="${sv('payNote')}" placeholder="ex. Contribuția lunară: 100 lei până pe 5"></label></div>
+      <div><button class="btn primary" type="submit">Salvează</button></div>
+    </form>
+    <p class="small muted" style="margin:0">Aceste date le vede oricine are linkul paginii.</p>
+  </section>
+  <section class="card" style="display:grid;gap:14px">
+    <div class="spread"><h2 style="font-size:22px">Elevi</h2><button class="btn" data-act="new-stu">+ Elev</button></div>
+    <div class="list">${S.students.map(st=>`<div class="item click" data-edit-stu="${esc(st.id)}" tabindex="0"><div class="t"><span class="mono muted">${ref(st)}</span> ${esc(st.name)}</div><div class="small muted">Editează</div></div>`).join('')}</div>
+  </section>
+  <section class="card" style="display:grid;gap:12px">
+    <h2 style="font-size:22px">Export</h2>
+    <p class="small muted" style="margin:0">Descarcă situația în format CSV (se deschide în Excel), cu o coloană pentru fiecare cheltuială — la fel ca tabelul vechi.</p>
+    <div class="row"><a class="btn" href="/api/export.csv">Descarcă CSV</a></div>
+  </section>
+  <section class="card spread"><div><h2 style="font-size:22px">Sesiune</h2><div class="small muted">Ești autentificat drept casier pe acest dispozitiv.</div></div><button class="btn" data-act="logout">Ieși din cont</button></section>`;
+}
+
+/* ---------- modale ---------- */
+function openModal(html, onMount){
+  const root = $('#modal-root');
+  root.innerHTML = `<div class="ov" data-ov><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  onMount && onMount(root.querySelector('.modal'));
+  const f = root.querySelector('input,select,button'); f && f.focus();
+}
+const closeModal = () => { $('#modal-root').innerHTML=''; };
+
+function stuModal(id){
+  const st = stuById(id); if(!st) return;
+  const x = balances()[id];
+  const ex = sortedExpenses().filter(e => ct(e.alloc?.[id])>0);
+  const ps = S.payments.filter(p=>p.studentId===id).sort((a,b)=>(b.date||'')>(a.date||'')?1:-1);
+  openModal(`<div class="spread"><div><div class="eyebrow">Fișa elevului · ${ref(st)}</div><h3>${esc(st.name)}</h3></div><button class="btn ghost" data-close aria-label="Închide">✕</button></div>
+   <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+     <div class="stat"><div class="k">Virat</div><div class="v">${lei(x.paid)}</div></div>
+     <div class="stat"><div class="k">Cheltuieli</div><div class="v">${lei(x.spent)}</div></div>
+     <div class="stat"><div class="k">Sold</div><div class="v ${x.bal<0?'amt-neg':'amt-pos'}">${leiS(x.bal)}</div></div></div>
+   <div><h3 style="font-size:16px;margin-bottom:8px">Cheltuieli (${ex.length})</h3>
+   ${ex.length?`<div class="list">${ex.map(e=>`<div class="item"><div style="min-width:0"><div class="t">${esc(e.title)}</div><div class="meta">${fdate(e.date)}</div></div><div class="amt">${lei(ct(e.alloc[id]))}</div></div>`).join('')}</div>`:'<div class="muted small">Nicio cheltuială.</div>'}</div>
+   <div><div class="spread" style="margin-bottom:8px"><h3 style="font-size:16px">Plăți (${ps.length})</h3>${S.admin?`<button class="btn sm" data-act="new-pay" data-stu="${esc(id)}">+ Plată</button>`:''}</div>
+   ${ps.length?`<div class="list">${ps.map(p=>`<div class="item"><div><div class="t">${esc(METHODS[p.method]||p.method||'Plată')}</div><div class="meta">${fdate(p.date)}${p.note?` · ${esc(p.note)}`:''}</div></div><div class="amt amt-pos">${lei(ct(p.amount))}</div></div>`).join('')}</div>`:'<div class="muted small">Nicio plată.</div>'}</div>`);
+}
+
+function expModal(id){
+  const e = id ? S.expenses.find(x=>x.id===id) : null;
+  if(e && !S.admin){
+    const rows = S.students.filter(s=>ct(e.alloc?.[s.id])>0).map(s=>`<tr><td>${esc(s.name)}</td><td class="r num">${lei(ct(e.alloc[s.id]))}</td></tr>`).join('');
+    openModal(`<div class="spread"><div><div class="eyebrow">${fdate(e.date)}</div><h3>${esc(e.title)}</h3></div><button class="btn ghost" data-close aria-label="Închide">✕</button></div>
+      ${e.note?`<p style="margin:0">${esc(e.note)}</p>`:''}
+      <div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Elev</th><th class="r">Sumă</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td class="r num">${lei(expTotal(e))}</td></tr></tfoot></table></div>`);
+    return;
+  }
+  const a = e?.alloc || {};
+  const rows = S.students.map(s=>{ const v=a[s.id]; const on = e ? ct(v)>0 : true;
+    return `<label><input type="checkbox" data-chk="${esc(s.id)}" ${on?'checked':''}><span>${esc(s.name)}</span><input type="number" step="0.01" min="0" data-amt="${esc(s.id)}" value="${e&&ct(v)>0?Number(v).toFixed(2):''}" aria-label="Sumă ${esc(s.name)}"></label>`; }).join('');
+  openModal(`<div class="spread"><h3>${e?'Editează cheltuiala':'Cheltuială nouă'}</h3><button class="btn ghost" data-close aria-label="Închide">✕</button></div>
+   <form id="exp-form" class="form">
+     <label class="fld">Ce s-a cumpărat / plătit<input id="e-title" type="text" required value="${esc(e?.title||'')}" placeholder="ex. Bilete teatru Luceafărul"></label>
+     <div class="f2"><label class="fld">Data<input id="e-date" type="date" value="${esc(e?.date ?? today())}"></label>
+     <label class="fld">Notă / bon<input id="e-note" type="text" value="${esc(e?.note||'')}" placeholder="opțional"></label></div>
+     <div class="tools"><span class="small"><strong>Sumă pe elev</strong></span><input id="t-each" type="number" step="0.01" min="0" aria-label="Sumă pe elev"><button type="button" class="btn sm" id="t-each-btn">Aplică bifaților</button>
+       <span class="small" style="margin-left:8px"><strong>sau total</strong></span><input id="t-total" type="number" step="0.01" min="0" aria-label="Total de împărțit"><button type="button" class="btn sm" id="t-total-btn">Împarte egal</button></div>
+     <div class="row small"><button type="button" class="btn sm ghost" id="t-all">Bifează toți</button><button type="button" class="btn sm ghost" id="t-none">Debifează toți</button><span class="muted" id="t-sum"></span></div>
+     <div class="alloc">${rows}</div>
+     <div class="spread"><div class="row"><button class="btn primary" type="submit">Salvează</button><button class="btn" type="button" data-close>Renunță</button></div>
+     ${e?`<button class="btn danger" type="button" id="e-del">Șterge</button>`:''}</div>
+   </form>`, m => {
+    const upd = () => { let t=0,n=0; m.querySelectorAll('[data-chk]').forEach(c=>{ if(c.checked){ n++; t+=ct(m.querySelector(`[data-amt="${c.dataset.chk}"]`).value);} }); m.querySelector('#t-sum').textContent = `${n} elevi bifați · total ${lei(t)}`; };
+    m.addEventListener('input', upd); m.addEventListener('change', upd); upd();
+    const checked = () => [...m.querySelectorAll('[data-chk]')].filter(c=>c.checked).map(c=>c.dataset.chk);
+    m.querySelector('#t-each-btn').onclick = () => { const v=m.querySelector('#t-each').value; checked().forEach(id=>m.querySelector(`[data-amt="${id}"]`).value = v?Number(v).toFixed(2):''); upd(); };
+    m.querySelector('#t-total-btn').onclick = () => { const ids=checked(); const T=ct(m.querySelector('#t-total').value); if(!ids.length||!T) return; const base=Math.floor(T/ids.length); let rest=T-base*ids.length;
+      ids.forEach(id=>{ const v=base+(rest>0?1:0); if(rest>0) rest--; m.querySelector(`[data-amt="${id}"]`).value=(v/100).toFixed(2); }); upd(); };
+    m.querySelector('#t-all').onclick = () => { m.querySelectorAll('[data-chk]').forEach(c=>c.checked=true); upd(); };
+    m.querySelector('#t-none').onclick = () => { m.querySelectorAll('[data-chk]').forEach(c=>c.checked=false); upd(); };
+    const del = m.querySelector('#e-del');
+    if(del) del.onclick = async () => { if(del.dataset.sure){ await guard(()=>api('DELETE','/api/expenses/'+e.id),'Cheltuială ștearsă'); closeModal(); } else { del.dataset.sure=1; del.textContent='Confirmi ștergerea?'; } };
+    m.querySelector('#exp-form').onsubmit = async ev => { ev.preventDefault();
+      const alloc = {}; checked().forEach(id=>{ const v=ct(m.querySelector(`[data-amt="${id}"]`).value); if(v>0) alloc[id]=v/100; });
+      if(!Object.keys(alloc).length){ toast('Pune o sumă la cel puțin un elev'); return; }
+      const doc = {title:m.querySelector('#e-title').value.trim(), date:m.querySelector('#e-date').value||'', note:m.querySelector('#e-note').value.trim(), alloc, order:e?.order??0, createdAt:e?.createdAt||Date.now()};
+      const ok = await guard(()=> e ? api('PUT','/api/expenses/'+e.id,doc) : api('POST','/api/expenses',doc), e?'Cheltuială actualizată':'Cheltuială adăugată');
+      if(ok) closeModal(); };
+  });
+}
+
+function payModal(id, presetStu, fromClaim){
+  const p = id ? S.payments.find(x=>x.id===id) : fromClaim || null;
+  const sid = p?.studentId || presetStu || '';
+  const opts = S.students.map(s=>`<option value="${esc(s.id)}" ${s.id===sid?'selected':''}>${esc(s.name)}</option>`).join('');
+  openModal(`<div class="spread"><h3>${id?'Editează plata':fromClaim?'Confirmă plata anunțată':'Plată nouă'}</h3><button class="btn ghost" data-close aria-label="Închide">✕</button></div>
+   <form id="pay-form" class="form">
+     <div class="f2"><label class="fld">Elev<select id="p-stu" required><option value="">— alege —</option>${opts}</select></label>
+     <label class="fld">Suma (lei)<input id="p-amt" type="number" step="0.01" min="0.01" required value="${p?Number(p.amount).toFixed(2):''}"></label></div>
+     <div class="f2"><label class="fld">Data<input id="p-date" type="date" value="${esc(p?.date ?? today())}"></label>
+     <label class="fld">Metoda<select id="p-met">${Object.entries(METHODS).map(([k,v])=>`<option value="${k}" ${(p?.method||'transfer')===k?'selected':''}>${v}</option>`).join('')}</select></label></div>
+     <label class="fld">Notă<input id="p-note" type="text" value="${esc(p?.note||'')}" placeholder="opțional"></label>
+     <div class="spread"><div class="row"><button class="btn primary" type="submit">${fromClaim?'Confirmă':'Salvează'}</button><button class="btn" type="button" data-close>Renunță</button></div>
+     ${id?`<button class="btn danger" type="button" id="p-del">Șterge</button>`:''}</div>
+   </form>`, m => {
+    const del = m.querySelector('#p-del');
+    if(del) del.onclick = async () => { if(del.dataset.sure){ await guard(()=>api('DELETE','/api/payments/'+id),'Plată ștearsă'); closeModal(); } else { del.dataset.sure=1; del.textContent='Confirmi ștergerea?'; } };
+    m.querySelector('#pay-form').onsubmit = async ev => { ev.preventDefault();
+      const doc = {studentId:m.querySelector('#p-stu').value, amount:ct(m.querySelector('#p-amt').value)/100, date:m.querySelector('#p-date').value||'', method:m.querySelector('#p-met').value, note:m.querySelector('#p-note').value.trim(), createdAt:(id&&p.createdAt)||Date.now()};
+      if(!doc.studentId||!doc.amount){ toast('Alege elevul și suma'); return; }
+      const ok = await guard(()=> fromClaim ? api('POST','/api/claims/'+fromClaim.id+'/confirm',doc) : id ? api('PUT','/api/payments/'+id,doc) : api('POST','/api/payments',doc), fromClaim?'Plată confirmată':id?'Plată actualizată':'Plată adăugată');
+      if(ok) closeModal(); };
+  });
+}
+
+function stuEditModal(id){
+  const st = id ? stuById(id) : null;
+  const nextNr = S.students.reduce((a,s)=>Math.max(a,s.nr||0),0)+1;
+  openModal(`<div class="spread"><h3>${st?'Editează elevul':'Elev nou'}</h3><button class="btn ghost" data-close aria-label="Închide">✕</button></div>
+   <form id="stu-form" class="form"><div class="f2">
+     <label class="fld">Nume și prenume<input id="u-name" type="text" required value="${esc(st?.name||'')}"></label>
+     <label class="fld">Nr. crt. (dă codul FC)<input id="u-nr" type="number" min="1" step="1" required value="${st?.nr||nextNr}"></label></div>
+     <div class="row"><button class="btn primary" type="submit">Salvează</button><button class="btn" type="button" data-close>Renunță</button></div></form>`, m => {
+    m.querySelector('#stu-form').onsubmit = async ev => { ev.preventDefault();
+      const doc = {name:m.querySelector('#u-name').value.trim(), nr:Number(m.querySelector('#u-nr').value)};
+      const sid = st?.id || ('s'+String(doc.nr).padStart(2,'0')+'-'+Math.random().toString(36).slice(2,6));
+      if(await guard(()=>api('PUT','/api/students/'+sid,doc), st?'Elev actualizat':'Elev adăugat')) closeModal(); };
+  });
+}
+
+/* ---------- scrieri ---------- */
+async function guard(fn, okMsg){
+  try{ await fn(); if(okMsg) toast(okMsg); return true; }
+  catch(e){
+    if(e.status===401){ S.admin=false; render(); toast('Sesiunea de casier a expirat. Autentifică-te din nou.'); }
+    else toast(e.status ? e.message : 'Nu s-a salvat. Verifică conexiunea și încearcă din nou.');
+    return false; }
+  finally{ refresh(); }
+}
+
+function loginModal(){
+  openModal(`<div class="spread"><h3>Autentificare casier</h3><button class="btn ghost" data-close aria-label="Închide">✕</button></div>
+   <form id="login-form" class="form"><label class="fld">Parola de casier<input id="l-pass" type="password" autocomplete="current-password" required></label>
+   <div id="l-err" class="small amt-neg"></div>
+   <div class="row"><button class="btn primary" type="submit">Intră</button><button class="btn" type="button" data-close>Renunță</button></div></form>`, m => {
+    m.querySelector('#login-form').onsubmit = async ev => { ev.preventDefault();
+      try{ await api('POST','/api/login',{password:m.querySelector('#l-pass').value}); closeModal(); await refresh(); toast('Bun venit, casierule'); }
+      catch(e){ m.querySelector('#l-err').textContent = e.message; } };
+  });
+}
+
+/* ---------- evenimente ---------- */
+document.addEventListener('click', async ev => {
+  const t = ev.target.closest('[data-close],[data-open-stu],[data-open-exp],[data-act],[data-copy],[data-edit-pay],[data-edit-stu],[data-confirm-claim],[data-reject-claim],#cl-msg');
+  if(!t){ if(ev.target.matches('[data-ov]')) closeModal(); return; }
+  if(t.matches('[data-close]')) return closeModal();
+  if(t.dataset.openStu) return stuModal(t.dataset.openStu);
+  if(t.dataset.openExp) return expModal(t.dataset.openExp);
+  if(t.dataset.editPay) return payModal(t.dataset.editPay);
+  if(t.dataset.editStu) return stuEditModal(t.dataset.editStu);
+  if(t.dataset.copy!==undefined) return copy(t.dataset.copy, t);
+  if(t.dataset.confirmClaim){ const c=S.claims.find(x=>x.id===t.dataset.confirmClaim); if(c) payModal(null,null,{...c}); return; }
+  if(t.dataset.rejectClaim){ if(t.dataset.sure){ await guard(()=>api('DELETE','/api/claims/'+t.dataset.rejectClaim),'Anunț respins'); } else { t.dataset.sure=1; t.textContent='Sigur?'; } return; }
+  if(t.id==='cl-msg'){ const st=stuById($('#cl-stu').value); const msg=claimMessage(st,$('#cl-amt').value,$('#cl-date').value,$('#cl-met').value);
+    $('#cl-out').innerHTML = `<div data-copy-scope><div class="msg copy-src">${esc(msg)}</div></div>`; return copy(msg, $('#cl-out .msg')); }
+  const a = t.dataset.act;
+  if(a==='new-exp') return expModal(null);
+  if(a==='new-pay') return payModal(null, t.dataset.stu || (view()==='plati'?S.payFilter:''));
+  if(a==='new-stu') return stuEditModal(null);
+  if(a==='login'){ ev.preventDefault(); return loginModal(); }
+  if(a==='logout'){ await api('POST','/api/logout'); location.hash='#elevi'; await refresh(); toast('Ai ieșit din cont'); return; }
+});
+document.addEventListener('keydown', ev => {
+  if(ev.key==='Escape') closeModal();
+  if(ev.key==='Enter' && ev.target.matches('tr[tabindex],.item[tabindex]')) ev.target.click();
+});
+document.addEventListener('change', ev => {
+  if(ev.target.id==='mine-sel'){ S.mine = ev.target.value||null; try{ S.mine?localStorage.setItem('fc-copil',S.mine):localStorage.removeItem('fc-copil'); }catch(e){} render(); }
+  if(ev.target.id==='pay-filter'){ S.payFilter = ev.target.value; render(); }
+});
+document.addEventListener('submit', async ev => {
+  if(ev.target.id==='set-form'){ ev.preventDefault();
+    const doc = {}; ['className','school','beneficiar','iban','bank','revolut','contact','payNote'].forEach(k=>doc[k]=$('#s-'+k).value.trim());
+    await guard(()=>api('PUT','/api/settings',doc),'Date salvate'); }
+  if(ev.target.id==='claim-form'){ ev.preventDefault();
+    const st = stuById($('#cl-stu').value); const amount = ct($('#cl-amt').value)/100;
+    if(!st||!amount){ toast('Alege copilul și suma'); return; }
+    const doc = {studentId:st.id, amount, date:$('#cl-date').value||today(), method:$('#cl-met').value, note:'', createdAt:Date.now(), by:S.uid||null};
+    try{ await api('POST','/api/claims',doc); toast('Anunț trimis casierului'); $('#cl-out').innerHTML = `<div class="notice" style="border-left-color:var(--pos);background:var(--pos-soft)">Gata. Plata apare la „Plăți” ca în așteptare până o confirmă casierul.</div>`; }
+    catch(e){ if(e.status===400){ toast(e.message); return; } const msg=claimMessage(st,$('#cl-amt').value,$('#cl-date').value,$('#cl-met').value);
+      $('#cl-out').innerHTML = `<div class="notice">Anunțul nu s-a trimis (${esc(e.message)}). Copiază mesajul de mai jos și trimite-l casierului pe WhatsApp.</div><div data-copy-scope style="margin-top:8px"><div class="msg copy-src">${esc(msg)}</div></div>`; }
+  }
+});
+addEventListener('hashchange', () => { closeModal(); render(); scrollTo({top:0}); });
+
+/* ---------- pornire ---------- */
+async function refresh(){
+  try{
+    const d = await api('GET','/api/state');
+    Object.assign(S, {students:d.students, expenses:d.expenses, payments:d.payments, claims:d.claims, settings:d.settings||{}, admin:d.admin, adminEnabled:d.adminEnabled, loaded:true, error:null});
+    if(S.mine && !stuById(S.mine)) S.mine=null;
+  }catch(e){ S.error = e.message || 'fără conexiune'; }
+  render();
+}
+let refreshTimer=null;
+function startLive(){
+  if(!window.EventSource) { setInterval(refresh, 20000); return; }
+  const es = new EventSource('/api/events');
+  es.addEventListener('changed', () => { clearTimeout(refreshTimer); refreshTimer = setTimeout(refresh, 150); });
+  es.onerror = () => {}; // browserul se reconectează singur
+}
+render();
+refresh().then(startLive);
+})();
+</script>
+</body>
+</html>

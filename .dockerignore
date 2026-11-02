@@ -1,0 +1,6 @@
+data/
+.env
+node_modules/
+*.sqlite*
+seed.excel-backup.json
+.git

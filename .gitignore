@@ -1,0 +1,8 @@
+data/
+.env
+node_modules/
+*.sqlite
+*.sqlite-*
+# date reale din Excel (nume de copii) - nu se publică
+seed.excel-backup.json
+.DS_Store

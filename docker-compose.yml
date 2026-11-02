@@ -1,0 +1,16 @@
+services:
+  fondul-clasei:
+    build: .
+    image: fondul-clasei:latest
+    container_name: fondul-clasei
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Setează ADMIN_PASSWORD în fișierul .env}
+      SESSION_DAYS: ${SESSION_DAYS:-30}
+    volumes:
+      - fond-data:/data
+
+volumes:
+  fond-data:

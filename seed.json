@@ -1,0 +1,235 @@
+{
+ "students": [
+  {
+   "id": "s01",
+   "name": "POPESCU Ana-Maria",
+   "nr": 1
+  },
+  {
+   "id": "s02",
+   "name": "IONESCU Matei",
+   "nr": 2
+  },
+  {
+   "id": "s03",
+   "name": "CONSTANTIN Ioana",
+   "nr": 3
+  },
+  {
+   "id": "s04",
+   "name": "DUMITRESCU Luca",
+   "nr": 4
+  },
+  {
+   "id": "s05",
+   "name": "MARIN Sofia",
+   "nr": 5
+  },
+  {
+   "id": "s06",
+   "name": "STAN Andrei",
+   "nr": 6
+  },
+  {
+   "id": "s07",
+   "name": "GHEORGHE Elena",
+   "nr": 7
+  },
+  {
+   "id": "s08",
+   "name": "RADU Victor",
+   "nr": 8
+  }
+ ],
+ "expenses": [
+  {
+   "id": "e01",
+   "title": "Serbare deschidere an școlar",
+   "date": "2026-09-08",
+   "note": "Baloane, flori, diplome",
+   "alloc": {
+    "s01": 40,
+    "s02": 40,
+    "s03": 40,
+    "s04": 40,
+    "s05": 40,
+    "s06": 40,
+    "s07": 40,
+    "s08": 40
+   },
+   "order": 0,
+   "createdAt": 1
+  },
+  {
+   "id": "e02",
+   "title": "Manual limba engleză",
+   "date": "2026-09-15",
+   "note": "Factura nr. 112",
+   "alloc": {
+    "s01": 48,
+    "s02": 48,
+    "s03": 48,
+    "s04": 48,
+    "s05": 48,
+    "s06": 48,
+    "s07": 48,
+    "s08": 48
+   },
+   "order": 0,
+   "createdAt": 2
+  },
+  {
+   "id": "e03",
+   "title": "Teatru „Ion Creangă”",
+   "date": "2026-10-03",
+   "note": "Bilete + transport",
+   "alloc": {
+    "s01": 65,
+    "s02": 65,
+    "s03": 65,
+    "s04": 65,
+    "s05": 65,
+    "s07": 65,
+    "s08": 65
+   },
+   "order": 0,
+   "createdAt": 3
+  },
+  {
+   "id": "e04",
+   "title": "Gazeta Matematică – octombrie",
+   "date": "2026-10-10",
+   "note": "",
+   "alloc": {
+    "s01": 28,
+    "s02": 28,
+    "s03": 28,
+    "s04": 28,
+    "s05": 28,
+    "s06": 28,
+    "s07": 28,
+    "s08": 28
+   },
+   "order": 0,
+   "createdAt": 4
+  },
+  {
+   "id": "e05",
+   "title": "Cărți clubul de lectură",
+   "date": "2026-10-20",
+   "note": "Doar cei înscriși",
+   "alloc": {
+    "s01": 120,
+    "s03": 120,
+    "s05": 120,
+    "s07": 120
+   },
+   "order": 0,
+   "createdAt": 5
+  }
+ ],
+ "payments": [
+  {
+   "id": "p01",
+   "studentId": "s01",
+   "amount": 400,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 1
+  },
+  {
+   "id": "p02",
+   "studentId": "s02",
+   "amount": 250,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 2
+  },
+  {
+   "id": "p03",
+   "studentId": "s03",
+   "amount": 350,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 3
+  },
+  {
+   "id": "p04",
+   "studentId": "s04",
+   "amount": 100,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 4
+  },
+  {
+   "id": "p05",
+   "studentId": "s05",
+   "amount": 350,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 5
+  },
+  {
+   "id": "p06",
+   "studentId": "s06",
+   "amount": 150,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 6
+  },
+  {
+   "id": "p07",
+   "studentId": "s07",
+   "amount": 280,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 7
+  },
+  {
+   "id": "p08",
+   "studentId": "s08",
+   "amount": 50,
+   "date": "2026-09-05",
+   "method": "transfer",
+   "note": "Contribuție semestrul I",
+   "createdAt": 8
+  },
+  {
+   "id": "p09",
+   "studentId": "s04",
+   "amount": 100,
+   "date": "2026-10-12",
+   "method": "numerar",
+   "note": "Dat la ședință",
+   "createdAt": 9
+  }
+ ],
+ "claims": [
+  {
+   "id": "c01",
+   "studentId": "s08",
+   "amount": 150,
+   "date": "2026-11-01",
+   "method": "revolut",
+   "note": "",
+   "createdAt": 10
+  }
+ ],
+ "settings": {
+  "className": "Clasa a II-a A (demo)",
+  "school": "Școala Gimnazială Exemplu · date de test",
+  "beneficiar": "Casier Demo",
+  "iban": "RO00 DEMO 0000 0000 0000 0000",
+  "bank": "Banca Exemplu",
+  "revolut": "@casier-demo",
+  "contact": "0700 000 000",
+  "payNote": "Contribuția pe semestru: 300 lei. Date de test, nu plăti nimic."
+ }
+}
